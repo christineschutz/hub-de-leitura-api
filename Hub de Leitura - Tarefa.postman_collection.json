@@ -1,0 +1,488 @@
+{
+  "info": {
+    "_postman_id": "f4a914cb-6a72-4178-9575-a54c10fb4ecb",
+    "name": "Hub de Leitura - Tarefa",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55369134"
+  },
+  "item": [
+    {
+      "name": "Autenticação",
+      "item": [
+        {
+          "name": "Login com usuário administrador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code é 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "const tokenGerado = pm.response.json().token;\r",
+                  "pm.environment.set(\"token\", tokenGerado);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@biblioteca.com\",\n  \"password\": \"admin123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}login",
+              "host": [
+                "{{baseUrl}}login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Catálogo de Livros",
+      "item": [
+        {
+          "name": "Cenários positivos",
+          "item": [
+            {
+              "name": "Listar 10 livros com sucesso",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code is 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Validar se a chave 'books' existe\", function () {\r",
+                      "    var jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('books');\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Validar se a chave 'pagination' existe\", function () {\r",
+                      "    var jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('pagination');\r",
+                      "});\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "",
+                    "value": "",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}books?limit=10",
+                  "host": [
+                    "{{baseUrl}}books"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Obter livro por ID",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Deve validar se o status code é 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Validar se a chave 'book' existe\", function () {\r",
+                      "    var jsonData = pm.response.json();\r",
+                      "    pm.expect(jsonData).to.have.property('book');\r",
+                      "});\r",
+                      "\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}books/1",
+                  "host": [
+                    "{{baseUrl}}books"
+                  ],
+                  "path": [
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Cadastrar livro",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code é 201\", function () {\r",
+                      "    pm.response.to.have.status(201);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Valida que o livro foi cadastrado com sucesso\", function () {\r",
+                      "    pm.expect(pm.response.text()).to.include(\"Livro criado com sucesso.\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"A noite das bruxas\",\n  \"author\": \"Agatha Christie\",\n  \"description\": \"Uma garota de 13 anos é assassinada após confessar que testemunhou um crime, e agora apenas Hercule Poirot pode descobrir qual segredo do passado ela levou para o túmulo.\",\n  \"category\": \"Ficção estrangeira\",\n  \"isbn\": \"978.85.254.3158-5\",\n  \"editor\": \"L&PM Editores\",\n  \"language\": \"Português\",\n  \"publication_year\": 2015,\n  \"pages\": 256,\n  \"format\": \"Físico\",\n  \"total_copies\": 4,\n  \"available_copies\": 4\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}books",
+                  "host": [
+                    "{{baseUrl}}books"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Atualizar dados de um livro",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code é 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Valida que o livro foi alterado com sucesso\", function () {\r",
+                      "    pm.expect(pm.response.text()).to.include(\"Livro atualizado com sucesso.\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "accept",
+                    "value": "*/*"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Nome livro atualizado\",\n  \"author\": \"Autor Atualizado\",\n  \"description\": \"Descrição atualizada do livro\",\n  \"category\": \"Categoria atualizada\",\n  \"editor\": \"Editora Atualizada\",\n  \"language\": \"Português\",\n  \"publication_year\": 2000,\n  \"pages\": 300,\n  \"format\": \"Físico\",\n  \"total_copies\": 10,\n  \"available_copies\": 5\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}books/1",
+                  "host": [
+                    "{{baseUrl}}books"
+                  ],
+                  "path": [
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Deletar livro",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code é 200\", function () {\r",
+                      "    pm.response.to.have.status(200);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Valida que o livro foi excluído com sucesso\", function () {\r",
+                      "    pm.expect(pm.response.text()).to.include(\"Livro deletado com sucesso.\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}books/1",
+                  "host": [
+                    "{{baseUrl}}books"
+                  ],
+                  "path": [
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Cenários negativos",
+          "item": [
+            {
+              "name": "Cadastrar livro sem permissão",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code é 401\", function () {\r",
+                      "    pm.response.to.have.status(401);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Valida que o usuário não está autenticado\", function () {\r",
+                      "    pm.expect(pm.response.text()).to.include(\"Token de acesso necessário\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": ""
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"A noite das bruxas\",\n  \"author\": \"Agatha Christie\",\n  \"description\": \"Uma garota de 13 anos é assassinada após confessar que testemunhou um crime, e agora apenas Hercule Poirot pode descobrir qual segredo do passado ela levou para o túmulo.\",\n  \"category\": \"Ficção estrangeira\",\n  \"isbn\": \"978.85.254.3158-5\",\n  \"editor\": \"L&PM Editores\",\n  \"language\": \"Português\",\n  \"publication_year\": 2015,\n  \"pages\": 256,\n  \"format\": \"Físico\",\n  \"total_copies\": 4,\n  \"available_copies\": 4\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}books",
+                  "host": [
+                    "{{baseUrl}}books"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Buscar livro inexistente",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code é 404\", function () {\r",
+                      "    pm.response.to.have.status(404);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Valida que livro não existe/não encontrado\", function () {\r",
+                      "    pm.expect(pm.response.text()).to.include(\"Livro não encontrado.\");\r",
+                      "});\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "",
+                    "value": "",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}books/9999999",
+                  "host": [
+                    "{{baseUrl}}books"
+                  ],
+                  "path": [
+                    "9999999"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Livro já cadastrado",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Status code é 400\", function () {\r",
+                      "    pm.response.to.have.status(400);\r",
+                      "});\r",
+                      "\r",
+                      "pm.test(\"Valida que o livro já existe\", function () {\r",
+                      "    pm.expect(pm.response.text()).to.include(\"Já existe um livro com este título e autor.\");\r",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "{{token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"A noite das bruxas\",\n  \"author\": \"Agatha Christie\",\n  \"description\": \"Uma garota de 13 anos é assassinada após confessar que testemunhou um crime, e agora apenas Hercule Poirot pode descobrir qual segredo do passado ela levou para o túmulo.\",\n  \"category\": \"Ficção estrangeira\",\n  \"isbn\": \"978.85.254.3158-5\",\n  \"editor\": \"L&PM Editores\",\n  \"language\": \"Português\",\n  \"publication_year\": 2015,\n  \"pages\": 256,\n  \"format\": \"Físico\",\n  \"total_copies\": 4,\n  \"available_copies\": 4\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}books",
+                  "host": [
+                    "{{baseUrl}}books"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
